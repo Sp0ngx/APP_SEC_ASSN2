@@ -45,6 +45,7 @@ public class TwoFactorController : Controller
     }
 
     [HttpPost("Toggle")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Toggle()
     {
         var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
@@ -85,6 +86,7 @@ public class TwoFactorController : Controller
     }
 
     [HttpPost("VerifyToggle")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> VerifyToggle(string code)
     {
         if (string.IsNullOrWhiteSpace(code))
@@ -124,6 +126,7 @@ public class TwoFactorController : Controller
     }
 
     [HttpPost("VerifyLogin")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> VerifyLogin(string code)
     {
         var userId = HttpContext.Session.GetInt32("2FAUserId");
