@@ -1,0 +1,156 @@
+﻿@model BookwormsOnline.Models.ViewModels.RegisterViewModel
+@inject IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h2>Membership Registration</h2>
+
+<form asp-action="Register" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <!-- First Name -->
+    <div>
+        <label>First Name</label>
+        <input asp-for="FirstName" class="form-control" maxlength="50" required />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <!-- Last Name -->
+    <div>
+        <label>Last Name</label>
+        <input asp-for="LastName" class="form-control" maxlength="50" required />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <!-- Email -->
+    <div>
+        <label>Email</label>
+        <input asp-for="Email" type="email" class="form-control" maxlength="100" required />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <!-- Password -->
+    <div>
+        <label>Password</label>
+        <input asp-for="Password" type="password" class="form-control" id="Password" minlength="12" required />
+        <span asp-validation-for="Password" class="text-danger"></span>
+
+        <!-- Client-side password rules -->
+        <ul id="passwordRules" class="text-muted mt-1">
+            <li id="ruleLength">At least 12 characters</li>
+            <li id="ruleLower">At least one lowercase letter</li>
+            <li id="ruleUpper">At least one uppercase letter</li>
+            <li id="ruleNumber">At least one number</li>
+            <li id="ruleSpecial">At least one special character</li>
+        </ul>
+    </div>
+
+    <!-- Confirm Password -->
+    <div>
+        <label>Confirm Password</label>
+        <input asp-for="ConfirmPassword" type="password" class="form-control" required />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <!-- Credit Card -->
+    <div>
+        <label>Credit Card No</label>
+        <input asp-for="CreditCardNo" class="form-control" maxlength="16" pattern="\d{13,16}"
+               title="Enter 13-16 digits" required />
+        <span asp-validation-for="CreditCardNo" class="text-danger"></span>
+    </div>
+
+    <!-- Mobile -->
+    <div>
+        <label>Mobile No</label>
+        <input asp-for="MobileNo" class="form-control"
+               pattern="^\+?\d{7,15}$"
+               title="Enter 7-15 digits. Can start with + for country code." required />
+        <span asp-validation-for="MobileNo" class="text-danger"></span>
+    </div>
+
+    <!-- Billing Address -->
+    <div>
+        <label>Billing Address</label>
+        <textarea asp-for="BillingAddress" class="form-control" maxlength="200" required></textarea>
+        <span asp-validation-for="BillingAddress" class="text-danger"></span>
+    </div>
+
+    <!-- Shipping Address -->
+    <div>
+        <label>Shipping Address</label>
+        <textarea asp-for="ShippingAddress" class="form-control" maxlength="200" required></textarea>
+        <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+    </div>
+
+    <!-- Profile Photo -->
+    <div>
+        <label>Photo (.JPG only)</label>
+        <input asp-for="Photo" type="file" accept=".jpg,.jpeg"
+               data-max-size="@ViewData["MaxPhotoSize"]" required />
+        <span asp-validation-for="Photo" class="text-danger"></span>
+    </div>
+
+    <!-- reCAPTCHA v3 token -->
+    <input type="hidden" id="recaptchaToken" name="RecaptchaToken" />
+
+    <br />
+    <button type="submit" class="btn btn-primary" id="registerBtn">Register</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @* Validation *@
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const passwordInput = document.getElementById("Password");
+
+            const rules = {
+                length: document.getElementById("ruleLength"),
+                lower: document.getElementById("ruleLower"),
+                upper: document.getElementById("ruleUpper"),
+                number: document.getElementById("ruleNumber"),
+                special: document.getElementById("ruleSpecial")
+            };
+
+            function checkPassword(value) {
+                const validLength = value.length >= 12;
+                const hasLower = /[a-z]/.test(value);
+                const hasUpper = /[A-Z]/.test(value);
+                const hasNumber = /\d/.test(value);
+                const hasSpecial = /[\W_]/.test(value);
+
+                rules.length.style.color = validLength ? "green" : "red";
+                rules.lower.style.color = hasLower ? "green" : "red";
+                rules.upper.style.color = hasUpper ? "green" : "red";
+                rules.number.style.color = hasNumber ? "green" : "red";
+                rules.special.style.color = hasSpecial ? "green" : "red";
+            }
+
+            passwordInput.addEventListener("input", function () {
+                checkPassword(passwordInput.value);
+            });
+        });
+
+                const photoInput = document.getElementById("Photo");
+        photoInput.addEventListener("change", function () {
+            const maxSize = parseInt(photoInput.dataset.maxSize);
+            const validationSpan = document.querySelector("span[asp-validation-for='Photo']");
+
+            if (photoInput.files.length > 0) {
+                const file = photoInput.files[0];
+                if (file.size > maxSize) {
+                    validationSpan.textContent = `Photo cannot exceed ${maxSize / (1024 * 1024)} MB.`;
+                    photoInput.value = "";
+                } else {
+                    validationSpan.textContent = "";
+                }
+            }
+        });
+    </script>
+}

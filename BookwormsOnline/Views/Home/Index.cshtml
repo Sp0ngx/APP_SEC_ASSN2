@@ -1,0 +1,34 @@
+﻿@model BookwormsOnline.Models.ViewModels.UserDisplayViewModel
+
+<h1 class="display-4">Welcome, @Model.FirstName!</h1>
+
+<table class="table table-striped">
+    <tr>
+        <th>First Name</th>
+        <td>@Model.FirstName</td>
+    </tr>
+    <tr>
+        <th>Last Name</th>
+        <td>@Model.LastName</td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td>@Model.Email</td>
+    </tr>
+    <tr>
+        <th>Mobile No</th>
+        <td>@Model.MobileNo</td>
+    </tr>
+    <tr>
+        <th>Billing Address</th>
+        <td>@Model.BillingAddress</td>
+    </tr>
+    <tr>
+        <th>Shipping Address</th>
+        <td>@Model.ShippingAddress</td>
+    </tr>
+    <tr>
+        <th>Credit Card</th>
+        <td>@Model.CreditCardNo</td>
+    </tr>
+</table>

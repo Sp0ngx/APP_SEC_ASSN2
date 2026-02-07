@@ -1,0 +1,23 @@
+﻿@model BookwormsOnline.Models.ViewModels.ForgotPasswordViewModel
+@{
+    ViewData["Title"] = "Forgot Password";
+}
+
+<h2>Forgot Password</h2>
+
+<form asp-action="Forgot" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" type="email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Send Reset Link</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
