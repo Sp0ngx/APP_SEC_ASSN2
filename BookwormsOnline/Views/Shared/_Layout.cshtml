@@ -71,6 +71,13 @@
                 </div>
             </div>
         </nav>
+
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <div id="sessionBanner" class="alert alert-warning text-center m-0 d-none" role="alert">
+                Your session will expire in <span id="sessionCountdown"></span> seconds. Move your mouse to continue.
+                </div>
+        }
     </header>
 
     <div class="container">
@@ -89,6 +96,64 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        const sessionTimeout = @Context.Items["SessionTimeoutMinutes"] * 60 * 1000;
+        const warningTime = @Context.Items["WarningBeforeMinutes"] * 60 * 1000;
+
+        let warningTimer, logoutTimer, countdownInterval;
+
+        const banner = document.getElementById("sessionBanner");
+        const countdownEl = document.getElementById("sessionCountdown");
+
+        let sessionStart = Date.now();
+
+        function startSessionTimers() {
+            clearTimeout(warningTimer);
+            clearTimeout(logoutTimer);
+            clearInterval(countdownInterval);
+
+            sessionStart = Date.now();
+
+            // Expiry banner display
+            warningTimer = setTimeout(() => {
+                banner.classList.remove("d-none");
+                startCountdown();
+            }, sessionTimeout - warningTime);
+
+            // Auto logout
+            logoutTimer = setTimeout(() => {
+                window.location.href = "/Login";
+            }, sessionTimeout);
+        }
+
+        function startCountdown() {
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        function updateCountdown() {
+            const elapsed = Date.now() - sessionStart;
+            const remaining = Math.max(0, sessionTimeout - elapsed); 
+
+            if (!banner.classList.contains("d-none")) {
+                countdownEl.textContent = Math.ceil(remaining / 1000);
+            }
+        }
+
+        // Reset timers on user activity
+        ["click", "mousemove", "keypress", "scroll"].forEach(evt =>
+            document.addEventListener(evt, () => {
+                startSessionTimers();
+                if (!banner.classList.contains("d-none")) {
+                    banner.classList.add("d-none");
+                    clearInterval(countdownInterval);
+                }
+            })
+        );
+
+        startSessionTimers();
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

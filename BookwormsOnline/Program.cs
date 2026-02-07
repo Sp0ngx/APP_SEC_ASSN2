@@ -6,6 +6,9 @@ using BookwormsOnline.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var sessionTimeoutMinutes = 30;
+var warningBeforeMinutes = 1;
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -18,7 +21,7 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromMinutes(sessionTimeoutMinutes);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -26,13 +29,20 @@ builder.Services.AddSession(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Login";     // fixed path
+        options.LoginPath = "/Login";
         options.LogoutPath = "/Login/Logout";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionTimeoutMinutes);
         options.AccessDeniedPath = "/Login";
     });
 
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    context.Items["SessionTimeoutMinutes"] = sessionTimeoutMinutes;
+    context.Items["WarningBeforeMinutes"] = warningBeforeMinutes;
+    await next();
+});
 
 if (!app.Environment.IsDevelopment())
 {

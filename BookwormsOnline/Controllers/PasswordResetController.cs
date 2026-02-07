@@ -80,6 +80,8 @@ public class PasswordResetController : Controller
 
         user.PasswordHash = newHash;
         user.PasswordChangedAt = DateTime.UtcNow;
+        user.FailedLoginAttempts = 0;
+        user.LockoutEnd = null;
 
         _context.PasswordHistories.Add(new PasswordHistory
         {
