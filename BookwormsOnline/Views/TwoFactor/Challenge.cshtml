@@ -2,22 +2,32 @@
     ViewData["Title"] = "Two-Factor Authentication";
 }
 
-<h2>Two-Factor Authentication</h2>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-lg-5 col-md-7">
+        <div class="card shadow-sm border-0 rounded-4 p-4 text-center">
+            <h2 class="card-title mb-3">Two-Factor Authentication</h2>
+            <p class="text-muted mb-4">
+                Enter the 6-digit code from your authenticator app to continue.
+            </p>
 
-<form asp-action="VerifyLogin" method="post">
-    <div class="form-group">
-        <label>Enter the 6-digit code from your authenticator app</label>
-        <input name="code" class="form-control" required />
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger mb-3">
+                    @TempData["Error"]
+                </div>
+            }
+
+            <form asp-action="VerifyLogin" method="post">
+                <div class="mb-3">
+                    <input name="code" class="form-control text-center rounded-pill" placeholder="Enter 6-digit code" maxlength="6" required />
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill">
+                        Verify
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <button type="submit" class="btn btn-primary mt-2">
-        Verify
-    </button>
-</form>
-
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger mt-2">
-        @TempData["Error"]
-    </div>
-}
+</div>

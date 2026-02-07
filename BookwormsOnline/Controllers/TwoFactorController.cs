@@ -8,7 +8,6 @@ using OtpNet;
 using QRCoder;
 using System.Security.Claims;
 
-[AllowAnonymous]
 [Route("TwoFactor")]
 public class TwoFactorController : Controller
 {

@@ -2,10 +2,16 @@
     ViewData["Title"] = "Forgot Password Confirmation";
 }
 
-<h2>Check your email</h2>
-<p>
-    If an account with that email exists, a password reset link has been sent.
-    Please check your inbox (and spam folder) to reset your password.
-</p>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-lg-5 col-md-7">
+        <div class="card shadow-sm border-0 rounded-4 text-center p-5">
+            <h2 class="card-title mb-3">Check Your Email</h2>
+            <p class="text-muted mb-4">
+                A password reset link has been sent to the email.
+                Please check your inbox and spam folder to reset your password.
+            </p>
 
-<a asp-controller="Login" asp-action="Login" class="btn btn-primary">Back to Login</a>
+            <a href="/Login" class="btn btn-primary btn-lg rounded-pill px-5">Back to Login</a>
+        </div>
+    </div>
+</div>

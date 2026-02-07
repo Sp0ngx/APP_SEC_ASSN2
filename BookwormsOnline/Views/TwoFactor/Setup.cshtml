@@ -2,51 +2,82 @@
     ViewData["Title"] = "Two-Factor Authentication Setup";
 }
 
-<h2>Two-Factor Authentication</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Two-Factor Authentication</h2>
+                    <p class="text-center text-muted mb-4">
+                        Use the button below to enable or disable Two-Factor Authentication (2FA) for your account.
+                    </p>
 
-<p>
-    Use the button below to enable or disable Two-Factor Authentication (2FA) for your account.
-</p>
+                    <form id="antiForgeryForm">
+                        @Html.AntiForgeryToken()
+                    </form>
 
-@* QR Code and Key *@
-<div id="qrSection" class="mb-3" style="display:none;">
-    <img id="qrImage" src="" alt="QR Code" class="mb-2" style="max-width: 200px;" />
-    <p><strong>Manual key:</strong> <code id="secretKey"></code></p>
+                    <div id="qrSection" class="text-center" style="display:none;">
+                        <img id="qrImage" src="" alt="QR Code" class="mb-3 img-fluid" style="max-width:200px;" />
+                        <p><strong>Manual key:</strong> <code id="secretKey" class="d-block mb-3"></code></p>
 
-    <div class="mt-2">
-        <input type="text" id="totpCode" class="form-control" placeholder="Enter 6-digit code" maxlength="6" />
-        <button id="verify2FAButton" class="btn btn-success mt-2">Verify Code</button>
+                        <div class="input-group mb-3 justify-content-center">
+                            <input type="text" id="totpCode" class="form-control text-center" placeholder="Enter 6-digit code" maxlength="6" style="max-width:220px;" />
+                            <button id="verify2FAButton" class="btn btn-success">Verify</button>
+                        </div>
+                        <small class="text-muted">Enter the code from your authenticator app to enable 2FA.</small>
+                    </div>
+
+
+                    <div class="d-grid">
+                        <button id="toggle2FAButton" class="btn rounded-pill">
+                            Loading...
+                        </button>
+                    </div>
+
+                    <div id="feedback" class="mt-3"></div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 
-<button id="toggle2FAButton" class="btn">
-    Loading...
-</button>
-
-<div id="feedback" class="mt-3"></div>
-
 @section Scripts {
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script>
         $(document).ready(function () {
+
             var btn = $("#toggle2FAButton");
             var qrSection = $("#qrSection");
             var qrImage = $("#qrImage");
             var secretKey = $("#secretKey");
             var feedback = $("#feedback");
 
-            // Fetch current 2FA state
+            // AntiForgery token
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            $.ajaxSetup({
+                headers: {
+                    "RequestVerificationToken": token
+                }
+            });
+
             function updateButton(isEnabled) {
                 if (isEnabled) {
-                    btn.removeClass("btn-success").addClass("btn-danger").text("Disable 2FA");
+                    btn.removeClass("btn-success")
+                       .addClass("btn-danger")
+                       .text("Disable 2FA");
                     qrSection.hide();
                 } else {
-                    btn.removeClass("btn-danger").addClass("btn-success").text("Enable 2FA");
+                    btn.removeClass("btn-danger")
+                       .addClass("btn-success")
+                       .text("Enable 2FA");
                 }
             }
 
-            // Initial state
+            // Load current 2FA status
             $.getJSON("@Url.Action("Status", "TwoFactor")", function (data) {
                 if (data.success) {
                     updateButton(data.isEnabled);
@@ -55,43 +86,53 @@
                 }
             });
 
-            // Toggle click
+            // Toggle 2FA
             btn.click(function () {
-                $.post("@Url.Action("Toggle", "TwoFactor")").done(function (res) {
+                $.ajax({
+                    url: "@Url.Action("Toggle", "TwoFactor")",
+                    type: "POST"
+                })
+                .done(function (res) {
                     if (res.requiresVerification) {
-                        // Show QR and secret for user to scan
                         qrImage.attr("src", res.qrCode);
                         secretKey.text(res.secret);
-                        qrSection.show();
+                        qrSection.fadeIn();
                         btn.hide();
-                        feedback.html('<div class="alert alert-info">Scan the QR code and enter a 6-digit code from your authenticator.</div>');
+                        feedback.html('<div class="alert alert-info text-center">Scan the QR code and enter the 6-digit code from your authenticator app.</div>');
                     } else {
                         updateButton(res.isEnabled);
                         qrSection.hide();
                         btn.show();
-                        feedback.html('<div class="alert alert-success">2FA status updated!</div>');
+                        feedback.html('<div class="alert alert-success text-center">2FA status updated!</div>');
                     }
-                }).fail(function () {
-                    feedback.html('<div class="alert alert-danger">Error toggling 2FA. Try again.</div>');
+                })
+                .fail(function () {
+                    feedback.html('<div class="alert alert-danger text-center">Error toggling 2FA. Try again.</div>');
                 });
             });
 
-            // Verify code
+            // Verify authenticator code
             $("#verify2FAButton").click(function (e) {
                 e.preventDefault();
                 var code = $("#totpCode").val();
 
-                $.post("@Url.Action("VerifyToggle", "TwoFactor")", { code: code }).done(function (res) {
+                $.ajax({
+                    url: "@Url.Action("VerifyToggle", "TwoFactor")",
+                    type: "POST",
+                    data: { code: code }
+                })
+                .done(function (res) {
                     if (res.success) {
                         updateButton(res.isEnabled);
-                        qrSection.hide();
+                        qrSection.fadeOut();
                         btn.show();
-                        feedback.html('<div class="alert alert-success">' + res.message + '</div>');
+                        feedback.html('<div class="alert alert-success text-center">' + res.message + '</div>');
                     } else {
-                        feedback.html('<div class="alert alert-danger">' + res.message + '</div>');
+                        feedback.html('<div class="alert alert-danger text-center">' + res.message + '</div>');
                     }
-                }).fail(function () {
-                    feedback.html('<div class="alert alert-danger">Error verifying code. Try again.</div>');
+                })
+                .fail(function () {
+                    feedback.html('<div class="alert alert-danger text-center">Error verifying code. Try again.</div>');
                 });
             });
         });
