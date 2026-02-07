@@ -1,34 +1,59 @@
 ﻿@model BookwormsOnline.Models.ViewModels.UserDisplayViewModel
 
-<h1 class="display-4">Welcome, @Model.FirstName!</h1>
+<div class="container mt-4">
+    <h2 class="mb-3">Welcome, @Model.FirstName</h2>
+    <div class="row align-items-center">
+        <div class="col-md-3 text-center">
+            @if (!string.IsNullOrEmpty(Model.PhotoPath))
+            {
+                <img src="@Model.PhotoPath"
+                        alt="Profile Photo"
+                        class="img-fluid border">
+            }
+            else
+            {
+                <div class="bg-light d-flex align-items-center justify-content-center">
+                    No Image
+                    </div>
+            }
+            </div>
 
-<table class="table table-striped">
-    <tr>
-        <th>First Name</th>
-        <td>@Model.FirstName</td>
-    </tr>
-    <tr>
-        <th>Last Name</th>
-        <td>@Model.LastName</td>
-    </tr>
-    <tr>
-        <th>Email</th>
-        <td>@Model.Email</td>
-    </tr>
-    <tr>
-        <th>Mobile No</th>
-        <td>@Model.MobileNo</td>
-    </tr>
-    <tr>
-        <th>Billing Address</th>
-        <td>@Model.BillingAddress</td>
-    </tr>
-    <tr>
-        <th>Shipping Address</th>
-        <td>@Model.ShippingAddress</td>
-    </tr>
-    <tr>
-        <th>Credit Card</th>
-        <td>@Model.CreditCardNo</td>
-    </tr>
-</table>
+            <div class="col-md-9">
+                <div class="row mb-2">
+                    <div class="col-sm-4 fw-bold">First Name</div>
+                    <div class="col-sm-8">@Model.FirstName</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-4 fw-bold">Last Name</div>
+                    <div class="col-sm-8">@Model.LastName</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-4 fw-bold">Email</div>
+                    <div class="col-sm-8">@Model.Email</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-4 fw-bold">Mobile No</div>
+                    <div class="col-sm-8">@Model.MobileNo</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-4 fw-bold">Billing Address</div>
+                    <div class="col-sm-8">@Model.BillingAddress</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-4 fw-bold">Shipping Address</div>
+                    <div class="col-sm-8">@Model.ShippingAddress</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-4 fw-bold">Credit Card</div>
+                    <div class="col-sm-8">@Model.CreditCardNo</div>
+                </div>
+            </div>
+    </div>
+
+</div>

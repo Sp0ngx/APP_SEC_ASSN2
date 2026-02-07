@@ -9,5 +9,6 @@
         public string MobileNo { get; set; } = string.Empty;
         public string BillingAddress { get; set; } = string.Empty;
         public string ShippingAddress { get; set; } = string.Empty;
+        public string PhotoPath { get; set; } = string.Empty;
     }
 }

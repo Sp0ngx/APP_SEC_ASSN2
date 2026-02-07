@@ -52,7 +52,8 @@ namespace BookwormsOnline.Controllers
                 CreditCardNo = _encryption.Decrypt(user.EncryptedCreditCard),
                 MobileNo = user.MobileNo,
                 BillingAddress = user.BillingAddress,
-                ShippingAddress = user.ShippingAddress
+                ShippingAddress = user.ShippingAddress,
+                PhotoPath = user.PhotoPath
             };
 
             return View(model);

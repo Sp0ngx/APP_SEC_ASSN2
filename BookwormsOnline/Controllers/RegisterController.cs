@@ -13,13 +13,15 @@ namespace BookwormsOnline.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly EncryptionService _encryption;
+        private readonly RecaptchaService _recaptchaService;
         private const long MaxPhotoSize = 5 * 1024 * 1024;
 
 
-        public RegisterController(ApplicationDbContext context, EncryptionService encryption)
+        public RegisterController(ApplicationDbContext context, EncryptionService encryption, RecaptchaService recaptchaService)
         {
             _context = context;
             _encryption = encryption;
+            _recaptchaService = recaptchaService;
         }
 
         [HttpGet]
@@ -35,6 +37,14 @@ namespace BookwormsOnline.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
+
+            var recaptchaValid = await _recaptchaService.Verify(model.RecaptchaToken, "register");
+
+            if (!recaptchaValid)
+            {
+                ModelState.AddModelError("", "reCAPTCHA verification failed. Please try again.");
+                return View(model);
+            }
 
             if (_context.Users.Any(u => u.Email == model.Email))
             {

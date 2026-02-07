@@ -53,5 +53,8 @@ namespace BookwormsOnline.Models.ViewModels
         [Required(ErrorMessage = "Profile photo is required.")]
         [DataType(DataType.Upload)]
         public IFormFile Photo { get; set; } = null!;
+
+        [Required]
+        public string RecaptchaToken { get; set; } = string.Empty;
     }
 }

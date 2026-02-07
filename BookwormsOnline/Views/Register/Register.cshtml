@@ -7,7 +7,7 @@
 
 <h2>Membership Registration</h2>
 
-<form asp-action="Register" method="post" enctype="multipart/form-data">
+<form id="registerForm" asp-action="Register" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
 
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -139,6 +139,23 @@
                     validationSpan.textContent = "";
                 }
             }
+        });
+    </script>
+
+    <script src="https://www.google.com/recaptcha/api.js?render=@Configuration["GoogleReCaptcha:SiteKey"]"></script>
+
+    <script>
+        var siteKey = "@Configuration["GoogleReCaptcha:SiteKey"]";
+
+        document.getElementById("registerForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            grecaptcha.ready(function () {
+                grecaptcha.execute(siteKey, { action: 'register' }).then(function (token) {
+                    document.getElementById('recaptchaToken').value = token;
+                    e.target.submit();
+                });
+            });
         });
     </script>
 }
