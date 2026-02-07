@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/BookwormsOnline/appsettings.json
+/BookwormsOnline/appsettings.Development.json
