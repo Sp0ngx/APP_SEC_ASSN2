@@ -92,5 +92,13 @@ namespace BookwormsOnline.Controllers
 
             return View(model);
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult KeepAlive()
+        {
+            return Ok();
+        }
+
     }
 }

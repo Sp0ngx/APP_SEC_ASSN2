@@ -72,7 +72,7 @@
         @if (User.Identity != null && User.Identity.IsAuthenticated)
         {
             <div id="sessionBanner" class="alert alert-warning text-center m-0 d-none" role="alert">
-                Your session will expire in <span id="sessionCountdown"></span> seconds. Move your mouse to continue.
+                Your session will expire in <span id="sessionCountdown"></span> seconds. Click anywhere to continue.
                 </div>
         }
     </header>
@@ -99,7 +99,6 @@
         const warningTime = @Context.Items["WarningBeforeMinutes"] * 60 * 1000;
 
         let warningTimer, logoutTimer, countdownInterval;
-
         const banner = document.getElementById("sessionBanner");
         const countdownEl = document.getElementById("sessionCountdown");
 
@@ -112,7 +111,7 @@
 
             sessionStart = Date.now();
 
-            // Expiry banner display
+            // Show warning
             warningTimer = setTimeout(() => {
                 banner.classList.remove("d-none");
                 startCountdown();
@@ -120,7 +119,7 @@
 
             // Auto logout
             logoutTimer = setTimeout(() => {
-                window.location.href = "/Login";
+                window.location.href = "/Logout";
             }, sessionTimeout);
         }
 
@@ -131,17 +130,20 @@
 
         function updateCountdown() {
             const elapsed = Date.now() - sessionStart;
-            const remaining = Math.max(0, sessionTimeout - elapsed); 
-
+            const remaining = Math.max(0, sessionTimeout - elapsed);
             if (!banner.classList.contains("d-none")) {
                 countdownEl.textContent = Math.ceil(remaining / 1000);
             }
         }
 
-        // Reset timers on user activity
-        ["click", "mousemove", "keypress", "scroll"].forEach(evt =>
+        function pingServer() {
+            fetch("/Home/KeepAlive", { method: "GET", credentials: "include" });
+        }
+
+        ["click","keypress","scroll"].forEach(evt =>
             document.addEventListener(evt, () => {
                 startSessionTimers();
+                pingServer();
                 if (!banner.classList.contains("d-none")) {
                     banner.classList.add("d-none");
                     clearInterval(countdownInterval);
