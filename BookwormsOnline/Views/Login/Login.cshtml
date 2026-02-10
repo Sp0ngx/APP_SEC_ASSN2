@@ -23,12 +23,17 @@
         <form id="loginForm" asp-action="Login" method="post">
             @Html.AntiForgeryToken()
 
-            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            @{
+                var modelErrors = ViewData.ModelState[string.Empty]?.Errors?.Count ?? 0;
+            }
+
+            @if (modelErrors > 0)
             {
                 <div class="alert alert-danger mb-3">
                     <div asp-validation-summary="ModelOnly"></div>
                 </div>
             }
+
 
             <div class="mb-3">
                 <label asp-for="Email" class="form-label fw-semibold">Email</label>
