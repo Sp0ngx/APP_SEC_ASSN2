@@ -5,7 +5,15 @@
     ViewData["Title"] = "Login";
 }
 
-<div class="d-flex justify-content-center align-items-center">
+<style>
+    .validation-summary-errors ul {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+</style>
+
+<div class="container mt-5 d-flex justify-content-center align-items-center">
     <div class="card shadow-sm p-4" style="max-width: 400px; width: 100%;">
         <div class="text-center mb-4">
             <h2 class="fw-bold">Sign in</h2>
@@ -15,7 +23,12 @@
         <form id="loginForm" asp-action="Login" method="post">
             @Html.AntiForgeryToken()
 
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            {
+                <div class="alert alert-danger mb-3">
+                    <div asp-validation-summary="ModelOnly"></div>
+                </div>
+            }
 
             <div class="mb-3">
                 <label asp-for="Email" class="form-label fw-semibold">Email</label>
@@ -37,6 +50,7 @@
                 <a asp-controller="PasswordReset" asp-action="Forgot" class="text-decoration-none">Forgot Password?</a>
             </div>
         </form>
+
     </div>
 </div>
 
