@@ -57,7 +57,7 @@ namespace BookwormsOnline.Controllers
                     user.FailedLoginAttempts++;
 
                     if (user.FailedLoginAttempts >= 3)
-                        user.LockoutEnd = DateTime.UtcNow.AddMinutes(10); // lockout time
+                        user.LockoutEnd = DateTime.UtcNow.AddMinutes(1); // lockout time
 
                     await _context.SaveChangesAsync();
                 }
