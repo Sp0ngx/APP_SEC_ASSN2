@@ -6,7 +6,7 @@ using BookwormsOnline.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var sessionTimeoutMinutes = 30;
+var sessionTimeoutMinutes = 5;
 var warningBeforeMinutes = 1;
 
 builder.Services.AddControllersWithViews();
@@ -33,7 +33,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Login/Logout";
         options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionTimeoutMinutes);
         options.SlidingExpiration = true;
-        options.AccessDeniedPath = "/Login";
+        options.AccessDeniedPath = "/Home/Error/403";
     });
 
 var app = builder.Build();

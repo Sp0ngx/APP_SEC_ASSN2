@@ -44,12 +44,17 @@ namespace BookwormsOnline.Controllers
                 return RedirectToAction("Login", "Login");
             }
 
+            var fullCardNumber = _encryption.Decrypt(user.EncryptedCreditCard);
+
+            string maskedCardNumber = "**** **** **** " + fullCardNumber.Substring(fullCardNumber.Length - 4);
+
+
             var model = new UserDisplayViewModel
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                CreditCardNo = _encryption.Decrypt(user.EncryptedCreditCard),
+                CreditCardNo = maskedCardNumber,
                 MobileNo = user.MobileNo,
                 BillingAddress = user.BillingAddress,
                 ShippingAddress = user.ShippingAddress,

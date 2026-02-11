@@ -10,7 +10,7 @@
         <div class="col-lg-7 col-md-9">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Membership Registration</h2>
+                    <h2 class="card-title text-center mb-4">Create Account</h2>
 
                     <form id="registerForm" asp-action="Register" method="post" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
@@ -90,7 +90,7 @@
                         <input type="hidden" id="recaptchaToken" name="RecaptchaToken" />
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg rounded-pill" id="registerBtn">Register</button>
+                            <button type="submit" class="btn btn-dark rounded-pill" id="registerBtn">Register</button>
                         </div>
                     </form>
                 </div>
