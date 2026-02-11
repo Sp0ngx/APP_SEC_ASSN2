@@ -40,6 +40,21 @@
                             <input asp-for="Password" type="password" class="form-control" id="Password" minlength="12" required />
                             <span asp-validation-for="Password" class="text-danger"></span>
 
+                            <div class="mt-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">Password strength:</small>
+                                    <small id="strengthLabel" class="fw-semibold text-danger">Very Weak</small>
+                                </div>
+
+                                <div class="progress" style="height: 8px;">
+                                    <div id="strengthBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+
+                                <small id="strengthHint" class="text-muted d-block mt-1">
+                                    Use 12+ chars with upper, lower, number, and special.
+                                </small>
+                            </div>
+
                             <ul>
                                 <li id="ruleLength">Minimum 12 characters</li>
                                 <li id="ruleLower">At least 1 lowercase letter</li>
@@ -114,12 +129,69 @@
             };
 
             function checkPassword(value) {
-                rules.length.style.color = value.length >= 12 ? "green" : "red";
-                rules.lower.style.color = /[a-z]/.test(value) ? "green" : "red";
-                rules.upper.style.color = /[A-Z]/.test(value) ? "green" : "red";
-                rules.number.style.color = /\d/.test(value) ? "green" : "red";
-                rules.special.style.color = /[\W_]/.test(value) ? "green" : "red";
+            const hasLength = value.length >= 12;
+            const hasLower = /[a-z]/.test(value);
+            const hasUpper = /[A-Z]/.test(value);
+            const hasNumber = /\d/.test(value);
+            const hasSpecial = /[\W_]/.test(value);
+
+            rules.length.style.color = hasLength ? "green" : "red";
+            rules.lower.style.color = hasLower ? "green" : "red";
+            rules.upper.style.color = hasUpper ? "green" : "red";
+            rules.number.style.color = hasNumber ? "green" : "red";
+            rules.special.style.color = hasSpecial ? "green" : "red";
+
+            let score = 0;
+            if (hasLength) score++;
+            if (hasLower) score++;
+            if (hasUpper) score++;
+            if (hasNumber) score++;
+            if (hasSpecial) score++;
+
+            const strengthBar = document.getElementById("strengthBar");
+            const strengthLabel = document.getElementById("strengthLabel");
+            const strengthHint = document.getElementById("strengthHint");
+
+            const percent = (score / 5) * 100;
+            strengthBar.style.width = percent + "%";
+
+            let label = "Very Weak";
+            let barClass = "bg-danger";
+            let hint = "Use 12+ chars with upper, lower, number, and special.";
+
+            if (score <= 1) {
+                label = "Very Weak";
+                barClass = "bg-danger";
+                hint = "Add more character types and make it at least 12 characters.";
+            } else if (score === 2) {
+                label = "Weak";
+                barClass = "bg-danger";
+                hint = "Good start—add 2-3 more character types.";
+            } else if (score === 3) {
+                label = "Medium";
+                barClass = "bg-warning";
+                hint = "Add another type (number/special/upper/lower) to strengthen it.";
+            } else if (score === 4) {
+                label = "Strong";
+                barClass = "bg-success";
+                hint = "Almost perfect—meet all rules for best strength.";
+            } else if (score === 5) {
+                label = "Very Strong";
+                barClass = "bg-success";
+                hint = "Nice—meets all your password rules.";
             }
+
+            strengthBar.classList.remove("bg-danger", "bg-warning", "bg-success");
+            strengthBar.classList.add(barClass);
+
+            strengthLabel.classList.remove("text-danger", "text-warning", "text-success");
+            if (score <= 2) strengthLabel.classList.add("text-danger");
+            else if (score === 3) strengthLabel.classList.add("text-warning");
+            else strengthLabel.classList.add("text-success");
+
+            strengthLabel.textContent = label;
+            strengthHint.textContent = hint;
+        }
 
             passwordInput.addEventListener("input", () => checkPassword(passwordInput.value));
 
