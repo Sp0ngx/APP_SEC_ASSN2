@@ -71,7 +71,7 @@
 
         @if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            <div id="sessionBanner" class="alert alert-warning text-center" role="alert">
+            <div id="sessionBanner" class="alert alert-warning text-center d-none" role="alert">
                 Your session will expire in <span id="sessionCountdown"></span> seconds. Click anywhere to continue.
                 </div>
         }

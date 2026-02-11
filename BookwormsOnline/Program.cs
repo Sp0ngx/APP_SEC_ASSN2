@@ -6,7 +6,7 @@ using BookwormsOnline.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var sessionTimeoutMinutes = 5;
+var sessionTimeoutMinutes = 2;
 var warningBeforeMinutes = 1;
 
 builder.Services.AddControllersWithViews();

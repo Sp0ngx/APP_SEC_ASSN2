@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 public class PasswordExpiryMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly int _maxAgeMinutes = 30;
+    private readonly int _maxAgeMinutes = 5;
 
     public PasswordExpiryMiddleware(RequestDelegate next)
     {
