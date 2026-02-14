@@ -20,7 +20,7 @@
                 $"https://www.google.com/recaptcha/api/siteverify?secret={secret}&response={token}",
                 null);
 
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync(); 
 
             // Deserialize case-insensitive
             var result = System.Text.Json.JsonSerializer.Deserialize<RecaptchaResponse>(
